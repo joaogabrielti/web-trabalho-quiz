@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html class="h-100" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courgette&display=swap">
+    <link rel="stylesheet" href="styles.css">
+    <title>Open Quiz - Perguntas & Respostas</title>
+</head>
+<body class="bg-dark d-flex flex-column justify-content-center align-items-center h-100">
+    <div class="container-fluid">
+        <div class="row justify-content-center g-1">
+            <div class="col-12">
+                <h1 class="text-light text-center text-uppercase">Open Quiz</h1>
+                <h2 class="text-light text-center">Perguntas & Respostas</h2>
+            </div>
+            <div class="col-12 col-sm-11 col-md-10 col-lg-9 col-xl-7 col-xxl-6" id="janelaIniciarJogo">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Iniciar Jogo</h3>
+                        <p class="card-text text-muted">Seleciona uma dificuldade e uma categoria para começar a jogar!</p>
+                        <div class="py-2">
+                            <label class="form-label mb-0">Dificuldade:</label>
+                            <select class="form-select" name="dificuldade">
+                                <option value="easy">Fácil</option>
+                                <option value="medium" selected>Médio</option>
+                                <option value="hard">Difícil</option>
+                            </select>
+                        </div>
+                        <div class="py-2">
+                            <label class="form-label mb-0">Categoria:</label>
+                            <select class="form-select" name="categoria" onclick="OpenQuiz.getCategorias()">
+                                <option value="0" selected>Categoria Aleatória</option>
+                            </select>
+                        </div>
+                        <div class="d-flex pt-3">
+                            <button class="btn btn-primary text-uppercase ms-auto" onclick="OpenQuiz.iniciar()">Iniciar Jogo</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-11 col-md-10 col-lg-9 col-xl-7 col-xxl-6 d-none" id="janelaResponderPergunta">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title">Responder Pergunta</h3>
+                        <div class="d-flex flex-column flex-md-row mb-1">
+                            <p class="card-text text-muted text-nowrap mb-0">
+                                Dificuldade: <span class="text-dark text-uppercase me-2" id="dificuldade"></span>
+                                Categoria: <span class="text-dark text-uppercase me-2" id="categoria"></span>
+                            </p>
+                            <p class="card-text text-muted text-nowrap mb-0 ms-md-auto">
+                                Pontos: <span class="text-dark me-2" id="pontos">0</span>
+                                Erros: <span class="text-dark me-2" id="erros">0 de 3</span>
+                            </p>
+                        </div>
+                        <div class="pt-2">
+                            <p id="questao"></p>
+                        </div>
+                        <div class="pb-2">
+                            <div class="row g-1" id="alternativas">
+                                <div class="col-12 col-md-6">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="alternativa" id="alt1" value="">
+                                        <label class="form-check-label" for="alt1">Alternativa 1</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column flex-md-row pt-3 d-none" id="actionResponderPergunta">
+                            <button class="btn btn-secondary text-uppercase mb-2 mb-md-0" onclick="OpenQuiz.responderMaisTarde()">Responder Mais Tarde</button>
+                            <button class="btn btn-primary text-uppercase ms-md-auto" onclick="OpenQuiz.responder()">Responder Pergunta</button>
+                        </div>
+                        <div class="d-flex flex-column flex-md-row pt-3" id="actionFinalizarJogo">
+                            <button class="btn btn-secondary text-uppercase mb-2 mb-md-0" onclick="OpenQuiz.finalizar()">Terminar</button>
+                            <button class="btn btn-secondary text-uppercase ms-md-auto mb-2 mb-md-0" onclick="OpenQuiz.getPergunta(true)">Pergunta Guardada</button>
+                            <button class="btn btn-primary text-uppercase ms-md-2" onclick="OpenQuiz.getPergunta()">Nova Pergunta</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalResultado" tabindex="-1" aria-labelledby="modalResultadoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalResultadoLabel"></h5>
+                    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Fechar" onclick="location.reload()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-1">Pontuação Final: <span class="fw-bold" id="resultadoPontos"></span></div>
+                    <div class="mb-1">Categoria: <span class="fw-bold" id="resultadoCategoria"></span></div>
+                    <div class="mb-1">Dificuldade: <span class="fw-bold" id="resultadoDificuldade"></span></div>
+                    <div class="mb-1">Questões Respondidas: <span class="fw-bold" id="resultadoRespondidas"></span></div>
+                    <div class="mb-1">Acertos: <span class="fw-bold" id="resultadoAcertos"></span></div>
+                    <div class="mb-1">Erros: <span class="fw-bold" id="resultadoErros"></span></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" data-bs-dismiss="modal" onclick="location.reload()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="index.js"></script>
+</body>
+</html>
